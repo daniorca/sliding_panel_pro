@@ -1,6 +1,6 @@
 # sliding_panel_pro
 
-The most customisable bottom sliding panel you can find on [**pub.dev**](https://pub.dev/packages/sliding_panel). Just as you want it!
+The most customisable bottom sliding panel you can find on [**pub.dev**](https://pub.dev/packages/sliding_panel_pro). Just as you want it!
 
 <br>
 
