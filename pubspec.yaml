@@ -1,7 +1,7 @@
 name: sliding_panel_pro
 description: The most customisable bottom sliding panel you can find on pub.dev. Just as you want it!
 version: 1.0.0-nullsafety.0
-homepage:
+homepage: https://github.com/daniorca/sliding_panel_pro
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
