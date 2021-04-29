@@ -7,7 +7,7 @@ class SizingExample extends StatefulWidget {
 }
 
 class _SizingExampleState extends State<SizingExample> {
-  PanelController pc;
+  late PanelController pc;
 
   @override
   void initState() {

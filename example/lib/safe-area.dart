@@ -8,11 +8,11 @@ class SafeAreaExample extends StatefulWidget {
 
 class _SafeAreaExampleState extends State<SafeAreaExample>
     with SingleTickerProviderStateMixin {
-  PanelController pc;
+  late PanelController pc;
 
   bool safe = true;
 
-  AnimationController animationController;
+  late AnimationController animationController;
 
   @override
   void initState() {
@@ -24,7 +24,7 @@ class _SafeAreaExampleState extends State<SafeAreaExample>
 
   @override
   void dispose() {
-    animationController?.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
@@ -60,11 +60,11 @@ class _SafeAreaExampleState extends State<SafeAreaExample>
       ];
 
   static final textStyleSubHead =
-      ThemeData.dark().textTheme.subtitle1.copyWith(fontSize: 20);
+      ThemeData.dark().textTheme.subtitle1!.copyWith(fontSize: 20);
   static final textStyleTitle =
-      ThemeData.dark().textTheme.headline6.copyWith(fontSize: 22);
+      ThemeData.dark().textTheme.headline6!.copyWith(fontSize: 22);
   static final textStyleHeadline =
-      ThemeData.dark().textTheme.headline5.copyWith(fontSize: 24);
+      ThemeData.dark().textTheme.headline5!.copyWith(fontSize: 24);
 
   @override
   Widget build(BuildContext context) {

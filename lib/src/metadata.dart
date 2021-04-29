@@ -1,8 +1,8 @@
 part of sliding_panel_pro;
 
 class _PanelMetadata {
-  double constrainedHeight;
-  double constrainedWidth;
+  double constrainedHeight = 0;
+  double constrainedWidth = 0;
 
   double totalHeight;
 
@@ -31,19 +31,19 @@ class _PanelMetadata {
   final VoidCallback listener;
 
   _PanelMetadata({
-    @required this.closedHeight,
-    @required this.collapsedHeight,
-    @required this.expandedHeight,
-    @required this.isTwoStatePanel,
-    @required this.snapping,
-    @required this.isDraggable,
-    @required this.isModal,
-    @required this.animatedAppearing,
-    @required this.snappingTriggerPercentage,
-    @required this.dragMultiplier,
-    @required this.safeAreaConfig,
-    @required this.initialPanelState,
-    @required this.listener,
+    @required this.closedHeight = 0,
+    @required this.collapsedHeight = 0,
+    @required this.expandedHeight = 0,
+    @required this.isTwoStatePanel = false,
+    @required this.snapping = PanelSnapping.enabled,
+    @required this.isDraggable = true,
+    @required this.isModal = false,
+    @required this.animatedAppearing = false,
+    @required this.snappingTriggerPercentage = 0.0,
+    @required this.dragMultiplier = 1.0,
+    @required this.safeAreaConfig = const SafeAreaConfig.all(),
+    @required this.initialPanelState = InitialPanelState.closed,
+    required this.listener,
   })  : _heightInternal = ValueNotifier<double>((isModal ||
                 initialPanelState == InitialPanelState.dismissed ||
                 animatedAppearing)
@@ -112,6 +112,6 @@ class _PanelMetadata {
         expandedHeight);
 
     currentHeight =
-        (currentHeight + toAdd)._safeClamp(closedHeight, expandedHeight);
+        (currentHeight + toAdd)._safeClamp(closedHeight, expandedHeight).toDouble();
   }
 }

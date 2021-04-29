@@ -1,5 +1,9 @@
 # sliding_panel_pro changelog
 
+## [1.0.0-nullsafety.1] - Apr 29, 2021
+
+- Updated code to be null-safety aware.
+
 ## [1.0.0-nullsafety.0] - Apr 08, 2021
 
 - Initial version of `sliding_panel_pro`.
@@ -10,8 +14,6 @@
 - Updated dependencies to latest release.
 
 ----------
-
-# sliding_panel changelog
 
 ## [1.3.2] - 14 October, 2020
 

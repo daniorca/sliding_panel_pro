@@ -131,7 +131,7 @@ class SlidingPanel extends StatefulWidget {
   /// the scroll view should respond to user input.
   ///
   /// Default: platform convention
-  final ScrollPhysics physics;
+  final ScrollPhysics? physics;
 
   /// Specify the amount of [PanelContent.bodyContent]
   /// to slide up when panel slides.
@@ -249,30 +249,30 @@ class SlidingPanel extends StatefulWidget {
   /// A callback that is called whenever the panel is slided.
   ///
   /// Returned between [PanelSize.closedHeight] and [PanelSize.expandedHeight].
-  final void Function(double position) onPanelSlide;
+  final void Function(double position)? onPanelSlide;
 
   /// A callback that is called whenever the state of the panel is changed.
   ///
   /// This will return any of the values of [PanelState].
-  final void Function(PanelState state) onPanelStateChanged;
+  final void Function(PanelState state)? onPanelStateChanged;
 
   /// A callback that is called whenever [PanelController.throwResult]
   /// or [PanelController.popWithThrowResult] is called.
-  final void Function(dynamic result) onThrowResult;
+  final void Function(dynamic result)? onThrowResult;
 
   final bool _isModal;
-  final _SlidingPanelModalRoute _panelModalRoute;
+  final _SlidingPanelModalRoute? _panelModalRoute;
 
   const SlidingPanel({
-    Key key,
+    Key? key,
     this.initialState = InitialPanelState.closed,
     this.animatedAppearing = false,
-    @required this.content,
+    required this.content,
     this.size = const PanelSize(),
     this.maxWidth = const PanelMaxWidth(),
     this.decoration = const PanelDecoration(),
     this.backdropConfig = const BackdropConfig(),
-    this.panelController,
+    required this.panelController,
     this.autoSizing = const PanelAutoSizing(),
     this.renderPanelBackground = true,
     this.snapping = PanelSnapping.disabled,
@@ -288,7 +288,7 @@ class SlidingPanel extends StatefulWidget {
     this.panelPoppingBehavior = PanelPoppingBehavior.POP_AFTER_TAP,
     this.panelClosedOptions = const PanelClosedOptions(),
     this.safeAreaConfig = const SafeAreaConfig.all(),
-    this.onPanelSlide,
+    this.onPanelSlide = null,
     this.onPanelStateChanged,
     this.onThrowResult,
   })  : this._isModal = false,
@@ -296,14 +296,14 @@ class SlidingPanel extends StatefulWidget {
 
   const SlidingPanel._modal(
     this._panelModalRoute, {
-    Key key,
+    Key? key,
     this.initialState = InitialPanelState.closed,
-    @required this.content,
+    required this.content,
     this.size = const PanelSize(),
     this.maxWidth = const PanelMaxWidth(),
     this.decoration = const PanelDecoration(),
     this.backdropConfig = const BackdropConfig(),
-    this.panelController,
+    required this.panelController,
     this.autoSizing = const PanelAutoSizing(),
     this.renderPanelBackground = true,
     this.snapping = PanelSnapping.disabled,

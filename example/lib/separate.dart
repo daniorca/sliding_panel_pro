@@ -7,7 +7,7 @@ class SeparateContentExample extends StatefulWidget {
 }
 
 class _SeparateContentExampleState extends State<SeparateContentExample> {
-  PanelController pc;
+  late PanelController pc;
 
   @override
   void initState() {
@@ -105,7 +105,7 @@ class _SeparateContentExampleState extends State<SeparateContentExample> {
                 enabled: true, closeOnTap: true, shadowColor: Colors.blue),
             content: PanelContent(
               panelContent: _content,
-              bodyContent: null,
+              bodyContent: SizedBox(),
               // see this...
             ),
             snapping: PanelSnapping.enabled,

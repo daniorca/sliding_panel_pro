@@ -1,7 +1,7 @@
 part of sliding_panel_pro;
 
 class _PanelScrollPosition extends ScrollPositionWithSingleContext {
-  VoidCallback _dragCancelled;
+  VoidCallback? _dragCancelled;
   final _PanelMetadata metadata;
 
   bool get shouldListScroll => pixels > 0.0;
@@ -9,13 +9,13 @@ class _PanelScrollPosition extends ScrollPositionWithSingleContext {
   final _SlidingPanelState panel;
 
   _PanelScrollPosition({
-    ScrollPhysics physics,
-    ScrollContext context,
+    ScrollPhysics physics = const AlwaysScrollableScrollPhysics(),
+    required ScrollContext context,
     double initPix = 0.0,
     bool keepScroll = true,
-    ScrollPosition oldPos,
-    this.metadata,
-    this.panel,
+    ScrollPosition? oldPos,
+    required this.metadata,
+    required this.panel,
   }) : super(
           physics: physics,
           context: context,
@@ -109,7 +109,7 @@ class _PanelScrollPosition extends ScrollPositionWithSingleContext {
       double percent =
           ((metadata.totalHeight * metadata.snappingTriggerPercentage) / 100);
 
-      percent = percent._safeClamp(0.0, 750.0);
+      percent = percent._safeClamp(0.0, 750.0).toDouble();
 
       if (percent > 0.0) {
         if (velocity.abs() <= percent) {
@@ -164,14 +164,14 @@ class _PanelScrollController extends ScrollController {
   final _SlidingPanelState panel;
 
   _PanelScrollController(
-      {double initScrollOffset = 0.0, this.metadata, this.panel})
+      {double initScrollOffset = 0.0, required this.metadata, required this.panel})
       : super(initialScrollOffset: initScrollOffset);
 
-  _PanelScrollPosition _scrollPosition;
+  late _PanelScrollPosition _scrollPosition;
 
   @override
   _PanelScrollPosition createScrollPosition(ScrollPhysics physics,
-      ScrollContext context, ScrollPosition oldPosition) {
+      ScrollContext context, ScrollPosition? oldPosition) {
     _scrollPosition = _PanelScrollPosition(
       physics: physics,
       context: context,

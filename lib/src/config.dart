@@ -61,7 +61,7 @@ enum PanelSnapping {
 /// Crossfades when sliding.
 class PanelCollapsedWidget {
   /// The widget content.
-  final Widget collapsedContent;
+  final Widget? collapsedContent;
 
   /// By default, [collapsedContent] is hidden only in [PanelState.expanded] mode.
   /// Set this to false, if you plan to hide
@@ -89,7 +89,7 @@ class PanelCollapsedWidget {
 /// If the height of this widget is not calculatable, it will NOT be shown.
 class PanelHeaderWidget {
   /// The widget content.
-  final Widget headerContent;
+  final Widget? headerContent;
 
   /// The decoration to be applied on the [headerContent].
   ///
@@ -106,7 +106,7 @@ class PanelHeaderWidget {
   ///
   /// If [headerContent] itself contains a tappable widget,
   /// it will take precedence.
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const PanelHeaderWidget({
     this.headerContent,
@@ -126,7 +126,7 @@ class PanelHeaderWidget {
 /// If the height of this widget is not calculatable, it will NOT be shown.
 class PanelFooterWidget {
   /// The widget content.
-  final Widget footerContent;
+  final Widget? footerContent;
 
   /// The decoration to be applied on the [footerContent].
   final PanelDecoration decoration;
@@ -149,7 +149,7 @@ class PanelContent {
   /// can be shown here, that hints user to scroll.
   ///
   /// If the height of this widget is not calculatable, it will NOT be shown.
-  final PanelHeaderWidget headerWidget;
+  final PanelHeaderWidget? headerWidget;
 
   /// The widget that will be shown below the panel,
   /// regardless of [PanelState] (A persistent widget).
@@ -159,7 +159,7 @@ class PanelContent {
   /// Note that, this will only be shown, when panel is expanded.
   ///
   /// If the height of this widget is not calculatable, it will NOT be shown.
-  final PanelFooterWidget footerWidget;
+  final PanelFooterWidget? footerWidget;
 
   /// The widgets that are shown as the panel content.
   /// When collapsed, content till [collapsedWidget] is shown.
@@ -175,7 +175,7 @@ class PanelContent {
   /// content ready and using the [SlidingPanel] additionally.
   ///
   /// Fitted to screen.
-  final Widget bodyContent;
+  final Widget? bodyContent;
 
   /// The widget that is displayed over [panelContent] when collapsed.
   ///
@@ -185,7 +185,7 @@ class PanelContent {
   const PanelContent({
     this.headerWidget = const PanelHeaderWidget(),
     this.footerWidget = const PanelFooterWidget(),
-    @required this.panelContent,
+    required this.panelContent,
     this.bodyContent,
     this.collapsedWidget = const PanelCollapsedWidget(),
   }) : assert(panelContent != null);
@@ -249,10 +249,10 @@ class PanelSize {
 /// as most of the properties are derived from it.
 class PanelDecoration {
   /// The border to render around the panel.
-  final Border border;
+  final Border? border;
 
   /// Provide this to round the corners of the panel.
-  final BorderRadiusGeometry borderRadius;
+  final BorderRadiusGeometry? borderRadius;
 
   /// Provide this to show custom shadows behind panel.
   ///
@@ -262,21 +262,21 @@ class PanelDecoration {
   /// Background color of the panel.
   ///
   /// Default : Canvas color (Theme.of(context).canvasColor).
-  final Color backgroundColor;
+  final Color? backgroundColor;
 
   /// Apply padding to the panel children.
-  final EdgeInsets padding;
+  final EdgeInsets? padding;
 
   /// Apply margin around the panel.
-  final EdgeInsets margin;
+  final EdgeInsets? margin;
 
   /// A gradient to use when filling the panel.
   ///
   /// If this is specified, [backgroundColor] has no effect.
-  final Gradient gradient;
+  final Gradient? gradient;
 
   /// An image to paint above the [backgroundColor] or [gradient].
-  final DecorationImage image;
+  final DecorationImage? image;
 
   /// The blend mode applied to the [backgroundColor] or [gradient] of panel.
   ///
@@ -284,7 +284,7 @@ class PanelDecoration {
   /// mode is used.
   ///
   /// If no [backgroundColor] or [gradient] is provided then this  has no impact.
-  final BlendMode backgroundBlendMode;
+  final BlendMode? backgroundBlendMode;
 
   const PanelDecoration({
     this.border,
@@ -357,12 +357,12 @@ class PanelHeaderOptions {
   /// A widget to display before the [PanelHeaderWidget.headerContent].
   ///
   /// Basically, an [IconButton] can be displayed here.
-  final Widget leading;
+  final Widget? leading;
 
   /// Widgets to display after the [PanelHeaderWidget.headerContent].
   ///
   /// Basically, [IconButton]s can be used to represent common actions.
-  final List<Widget> trailing;
+  final List<Widget>? trailing;
 
   /// How the [leading] and [trailing] should be
   /// vertically aligned in the header.
@@ -714,7 +714,7 @@ class PanelClosedOptions {
   /// Not triggered when null.
   ///
   /// Needs [detachDragging] to be true.
-  final Object sendResult;
+  final Object? sendResult;
 
   /// Triggers [PanelController.throwResult] with result as
   /// [throwResult] when the panel closes.
@@ -722,7 +722,7 @@ class PanelClosedOptions {
   /// Not triggered when null.
   ///
   /// Needs [detachDragging] to be true.
-  final Object throwResult;
+  final Object? throwResult;
 
   const PanelClosedOptions(
       {this.detachDragging = false,
@@ -794,10 +794,10 @@ class SafeAreaConfig {
   /// Also, don't remove padding from the content.
   ///
   /// This is the default.
-  const SafeAreaConfig.all({bool removePaddingFromContent, bool bodyHasSlivers})
+  const SafeAreaConfig.all({bool removePaddingFromContent = false, bool bodyHasSlivers = false})
       : this.top = true,
         this.bottom = true,
         this.sides = true,
-        this.removePaddingFromContent = removePaddingFromContent ?? false,
-        this.bodyHasSlivers = bodyHasSlivers ?? false;
+        this.removePaddingFromContent = removePaddingFromContent,
+        this.bodyHasSlivers = bodyHasSlivers;
 }

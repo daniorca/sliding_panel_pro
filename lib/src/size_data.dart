@@ -15,12 +15,12 @@ class PanelSizeData {
   final double _constrainedHeight, _constrainedWidth;
 
   PanelSizeData._(
-      {@required double closedHeight,
-      @required double collapsedHeight,
-      @required double expandedHeight,
-      @required double totalHeight,
-      @required double constrainedHeight,
-      @required double constrainedWidth})
+      {required double closedHeight,
+      required double collapsedHeight,
+      required double expandedHeight,
+      required double totalHeight,
+      required double constrainedHeight,
+      required double constrainedWidth})
       : _closedHeight = closedHeight,
         _collapsedHeight = collapsedHeight,
         _expandedHeight = expandedHeight,

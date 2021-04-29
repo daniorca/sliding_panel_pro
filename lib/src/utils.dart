@@ -1,14 +1,14 @@
 part of sliding_panel_pro;
 
 class _PanelAnimation {
-  static AnimationController animation;
+  static AnimationController? animation;
   static bool isCleared = true;
 
   static void clear() {
     if (!isCleared) {
       if (_PanelAnimation.animation != null) {
-        _PanelAnimation.animation.stop();
-        _PanelAnimation.animation.dispose();
+        _PanelAnimation.animation!.stop();
+        _PanelAnimation.animation!.dispose();
         _PanelAnimation.animation = null;
       }
       isCleared = true;
@@ -18,14 +18,14 @@ class _PanelAnimation {
 
 class _PanelSnapData {
   _PanelScrollPosition scrollPos;
-  double from, to, dragVelocity, flingVelocity;
+  late double from, to, dragVelocity, flingVelocity;
   bool shouldPanelSnap;
   PanelSnapping snapping;
 
   _PanelSnapData({
-    @required this.scrollPos,
-    @required this.dragVelocity,
-    @required this.snapping,
+    required this.scrollPos,
+    required this.dragVelocity,
+    required this.snapping,
   })  : shouldPanelSnap = false,
         flingVelocity = -2.0;
 
@@ -197,12 +197,12 @@ class _PanelSnapData {
       );
 
       void _tick() {
-        scrollPos.metadata.currentHeight = _PanelAnimation.animation.value;
+        scrollPos.metadata.currentHeight = _PanelAnimation.animation?.value ?? 0;
         // set panel's position
       }
 
-      _PanelAnimation.animation.value = currentH;
-      _PanelAnimation.animation.addListener(_tick);
+      _PanelAnimation.animation?.value = currentH;
+      _PanelAnimation.animation?.addListener(_tick);
 
       if (scrollPos.metadata.totalHeight != 0.0 &&
           scrollPos.metadata.totalHeight != double.infinity &&
@@ -216,16 +216,19 @@ class _PanelSnapData {
 
       // animate
       _PanelAnimation.isCleared = false;
-      _PanelAnimation.animation
+      if (_PanelAnimation.animation != null) {
+        _PanelAnimation.animation!
           .fling(velocity: flingVelocity)
           .whenCompleteOrCancel(() {});
+      }
+      
     }
   }
 }
 
 void _scrollPanel(
   _PanelScrollPosition scrollPos, {
-  double velocity,
+  double velocity = 0.0,
 }) {
   final Simulation simulation = ClampingScrollSimulation(
     position: scrollPos.metadata.currentHeight,
@@ -241,40 +244,45 @@ void _scrollPanel(
   double lastDelta = 0;
 
   void _tick() {
-    final double currentDelta = _PanelAnimation.animation.value - lastDelta;
+    final double currentDelta = _PanelAnimation.animation?.value ?? 0 - lastDelta;
 
-    lastDelta = _PanelAnimation.animation.value;
+    lastDelta = _PanelAnimation.animation?.value ?? 0;
 
     scrollPos.metadata.addPixels(currentDelta, shouldMultiply: false);
 
-    if ((velocity > 0 && scrollPos.metadata.isExpanded) ||
-        (velocity < 0 && scrollPos.metadata.isClosed)) {
+    if (
+      (velocity > 0 && scrollPos.metadata.isExpanded) ||
+      (velocity < 0 && scrollPos.metadata.isClosed) 
+    ) {
       // after dragging, if start or end reached
-      velocity = _PanelAnimation.animation.velocity +
+      if (_PanelAnimation.animation != null) {
+        velocity = ((_PanelAnimation.animation?.velocity ?? 0) +
           (scrollPos.physics.tolerance.velocity *
-              _PanelAnimation.animation.velocity.sign);
+              (_PanelAnimation.animation?.velocity?.sign ?? 0))).toDouble();
 
-      _PanelAnimation.animation.stop();
+        _PanelAnimation.animation?.stop();
+      }
     }
   }
 
   _PanelAnimation.isCleared = false;
-  _PanelAnimation.animation
-    ..addListener(_tick)
-    ..animateWith(simulation).whenCompleteOrCancel(() {});
+  if (_PanelAnimation.animation != null) {
+    _PanelAnimation.animation?.addListener(_tick);
+    _PanelAnimation.animation?.animateWith(simulation).whenCompleteOrCancel(() {});
+  }
 }
 
 Future<Null> _setPanelPosition(
   _SlidingPanelState panel, {
-  @required double to,
-  @required Duration duration,
+  required double to,
+  required Duration duration,
   bool shouldClamp = true,
 }) async {
   _PanelScrollPosition scrollPos = panel._scrollController._scrollPosition;
 
   if (shouldClamp)
     to = to._safeClamp(
-        scrollPos.metadata.closedHeight, scrollPos.metadata.expandedHeight);
+        scrollPos.metadata.closedHeight, scrollPos.metadata.expandedHeight).toDouble();
 
   double from = scrollPos.metadata.currentHeight;
 
@@ -288,15 +296,15 @@ Future<Null> _setPanelPosition(
     );
 
     void _tick() {
-      scrollPos.metadata.currentHeight = _PanelAnimation.animation.value;
+      scrollPos.metadata.currentHeight = _PanelAnimation.animation?.value ?? 0;
     }
 
-    _PanelAnimation.animation.value = scrollPos.metadata.currentHeight;
-    _PanelAnimation.animation.addListener(_tick);
+    _PanelAnimation.animation?.value = scrollPos.metadata.currentHeight;
+    _PanelAnimation.animation?.addListener(_tick);
 
     _PanelAnimation.isCleared = false;
 
-    await _PanelAnimation.animation.animateTo(
+    await _PanelAnimation.animation?.animateTo(
       to,
       curve: panel.widget.curve,
       duration: duration,
@@ -307,7 +315,7 @@ Future<Null> _setPanelPosition(
 /// returns how much amount of the body part should scroll
 /// up in pixels when the panel slides.
 double _getParallaxSlideAmount(_SlidingPanelState panel) {
-  final double amount = panel.widget.parallaxSlideAmount._safeClamp(0.0, 1.0);
+  final double amount = panel.widget.parallaxSlideAmount._safeClamp(0.0, 1.0).toDouble();
   final metadata = panel._metadata;
 
   double position = panel._controller
@@ -346,21 +354,21 @@ Color _getBackdropColor(_SlidingPanelState panel) {
     // If closedHeight is not 0.0 and still currently it is,
     // that's a dismissed panel. Don't allow dragging in it.
     if ((panel._metadata.currentHeight == 0.0) &&
-        (panel._metadata.closedHeight != 0.0)) return null;
+        (panel._metadata.closedHeight != 0.0)) return Color(0xFFFFFF);
     return panel.widget.backdropConfig.shadowColor;
   }
 
   if (panel.widget.backdropConfig.effectInCollapsedMode) {
     if (panel._controller.percentPosition(
             panel._metadata.closedHeight, panel._metadata.expandedHeight) <=
-        0.0) return null;
+        0.0) return Color(0xFFFFFF);
 
     return panel.widget.backdropConfig.shadowColor;
   } else {
     if (panel._controller.currentPosition > panel._metadata.collapsedHeight) {
       return panel.widget.backdropConfig.shadowColor;
     }
-    return null;
+    return Color(0xFFFFFF);
   }
 }
 
@@ -387,11 +395,11 @@ double _getCollapsedOpacity(_SlidingPanelState panel) {
 
 void _dragPanel(
   _SlidingPanelState panel, {
-  double delta,
-  bool shouldListScroll,
-  bool isGesture,
-  bool dragFromBody,
-  VoidCallback scrollContentSuper,
+  double delta = 0.0,
+  bool shouldListScroll = false,
+  bool isGesture = false,
+  bool dragFromBody = false,
+  required VoidCallback scrollContentSuper,
 }) {
   if ((panel._controller.currentState == PanelState.closed) &&
       (panel.widget.panelClosedOptions.detachDragging)) return;
@@ -430,7 +438,7 @@ void _dragPanel(
 }
 
 void _onPanelDragEnd(_SlidingPanelState panel, double primaryVelocity) {
-  if (panel?._scrollController?._scrollPosition == null) {
+  if (panel._scrollController._scrollPosition == null) {
     return;
   } else {
     if (panel._metadata.isDraggable &&
@@ -449,7 +457,7 @@ void _onPanelDragEnd(_SlidingPanelState panel, double primaryVelocity) {
                 panel._metadata.snappingTriggerPercentage) /
             100);
 
-        percent = percent._safeClamp(0.0, 750.0);
+        percent = percent._safeClamp(0.0, 750.0).toDouble();
 
         if (percent > 0.0) {
           if (primaryVelocity.abs() <= percent) {
@@ -515,7 +523,7 @@ const Map<BackPressBehavior, BackPressBehavior>
 };
 
 Future<bool> _decidePop(_SlidingPanelState panel) async {
-  BackPressBehavior behavior = panel.widget.backPressBehavior;
+  BackPressBehavior? behavior = panel.widget.backPressBehavior;
   PanelPoppingBehavior poppingBehavior = panel.widget.panelPoppingBehavior;
 
   if (panel._metadata.isTwoStatePanel) {
@@ -606,8 +614,8 @@ Future<bool> _decidePop(_SlidingPanelState panel) async {
   }
 }
 
-InitialPanelState _decideInitStateForModal({_PanelMetadata metadata}) {
-  InitialPanelState decidedState = metadata.initialPanelState;
+InitialPanelState _decideInitStateForModal({_PanelMetadata? metadata}) {
+  InitialPanelState decidedState = metadata?.initialPanelState ?? InitialPanelState.closed;
 
   if (decidedState == InitialPanelState.expanded) {
     // dont think about expanded
@@ -619,10 +627,10 @@ InitialPanelState _decideInitStateForModal({_PanelMetadata metadata}) {
     decidedState = InitialPanelState.closed;
   }
 
-  if (metadata.isTwoStatePanel) {
+  if (metadata?.isTwoStatePanel ?? false) {
     // handle cases for a two-state panel
     if (decidedState == InitialPanelState.closed) {
-      if (metadata.closedHeight == 0.0) {
+      if (metadata?.closedHeight == 0.0) {
         // because it doesn't show anything
         return InitialPanelState.expanded;
       }
@@ -637,7 +645,7 @@ InitialPanelState _decideInitStateForModal({_PanelMetadata metadata}) {
     return InitialPanelState.expanded;
   } else {
     if (decidedState == InitialPanelState.closed) {
-      if (metadata.closedHeight == 0.0) {
+      if (metadata?.closedHeight == 0.0) {
         // because it doesn't show anything
         // just assume, it should collapse
         decidedState = InitialPanelState.collapsed;
@@ -647,7 +655,7 @@ InitialPanelState _decideInitStateForModal({_PanelMetadata metadata}) {
     }
     if (decidedState == InitialPanelState.collapsed) {
       // collapse only if PanelCollapsedWidget given
-      if (metadata.collapsedHeight == 0.0) {
+      if (metadata?.collapsedHeight == 0.0) {
         return InitialPanelState.expanded;
       }
       return InitialPanelState.collapsed;

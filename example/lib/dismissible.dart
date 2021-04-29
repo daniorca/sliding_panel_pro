@@ -7,7 +7,7 @@ class DismissibleExample extends StatefulWidget {
 }
 
 class _DismissibleExampleState extends State<DismissibleExample> {
-  PanelController pc;
+  late PanelController pc;
   PanelState currentState = PanelState.closed;
 
   bool isBackdrop = false;
@@ -133,7 +133,7 @@ class _DismissibleExampleState extends State<DismissibleExample> {
             ),
           ),
         ),
-        decoration: PanelDecoration(backgroundColor: Colors.yellow[200]),
+        decoration: PanelDecoration(backgroundColor: Colors.yellow[200]!),
         onPanelStateChanged: (state) => setState(() => currentState = state),
         snapping: PanelSnapping.forced,
         isDraggable: true,

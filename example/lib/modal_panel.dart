@@ -7,7 +7,7 @@ class ModalPanelExample extends StatefulWidget {
 }
 
 class _ModalPanelExampleState extends State<ModalPanelExample> {
-  PanelController pc;
+  late PanelController pc;
 
   String selected = 'Open the panel, and then choose an item.';
 

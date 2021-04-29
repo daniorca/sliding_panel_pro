@@ -8,9 +8,9 @@ class TwoStateExample extends StatefulWidget {
 
 class _TwoStateExampleState extends State<TwoStateExample>
     with SingleTickerProviderStateMixin {
-  PanelController pc;
+  late PanelController pc;
 
-  AnimationController animationController;
+  late AnimationController animationController;
 
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _TwoStateExampleState extends State<TwoStateExample>
 
   @override
   void dispose() {
-    animationController?.dispose();
+    animationController.dispose();
     super.dispose();
   }
 

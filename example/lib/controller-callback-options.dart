@@ -7,7 +7,7 @@ class CustomizeDemo extends StatefulWidget {
 }
 
 class _CustomizeDemoState extends State<CustomizeDemo> {
-  PanelController pc;
+  late PanelController pc;
 
   bool draggable = true,
       snap = true,
@@ -283,11 +283,11 @@ class _CustomizeDemoState extends State<CustomizeDemo> {
                 : PanelSnapping.disabled,
         isDraggable: draggable,
         decoration: PanelDecoration(
-          backgroundColor: Colors.orange[200],
+          backgroundColor: Colors.orange[200]!,
           boxShadows: [
             BoxShadow(
               blurRadius: 16.0,
-              color: Colors.orange[400].withOpacity(0.75),
+              color: Colors.orange[400]!.withOpacity(0.75),
               spreadRadius: 4,
               offset: Offset(0, -3),
             ),

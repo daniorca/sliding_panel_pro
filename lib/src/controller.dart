@@ -5,7 +5,7 @@ part of sliding_panel_pro;
 /// Attaching the same controller to different panels
 /// would simply control the latest attached panel only.
 class PanelController {
-  _SlidingPanelState panel;
+  late _SlidingPanelState panel;
 
   bool _controlling = false;
 
@@ -16,8 +16,8 @@ class PanelController {
   /// this controller as a parameter in [SlidingPanel.panelController].
   bool get controlling => _controlling;
 
-  Duration _durationCollapsed;
-  Duration _durationExpanded;
+  late Duration _durationCollapsed;
+  late Duration _durationExpanded;
 
   double _diffHeight = 0.0;
 
@@ -52,7 +52,7 @@ class PanelController {
     }
   }
 
-  Duration _getDuration({double from, double to}) {
+  Duration _getDuration({double from = 0, double to = 0}) {
     return Duration(
         milliseconds: (((((to - from) * panel.widget.duration.inMilliseconds) /
                     _diffHeight)
@@ -62,7 +62,7 @@ class PanelController {
   }
 
   void _control(_SlidingPanelState panel) {
-    this.panel = null;
+    //this.panel = null;
 
     this.panel = panel;
 
@@ -81,7 +81,7 @@ class PanelController {
   ///
   /// This is useful when you have changed (replaced) the [PanelContent].
   /// and want the panel to adjust its size again.
-  void rebuild({VoidCallback then}) {
+  void rebuild({required VoidCallback then}) {
     if (controlling) panel.rebuild(then: then);
   }
 
@@ -105,7 +105,7 @@ class PanelController {
           to: 0.0,
           shouldClamp: false);
     else
-      return _printError();
+      return Future.error('Missing Controller');
   }
 
   /// Bring the panel to [PanelState.closed].
@@ -150,7 +150,7 @@ class PanelController {
                           from: currentPosition,
                           to: panel._metadata.collapsedHeight),
               to: panel._metadata.collapsedHeight)
-      : _printError();
+      : Future.error('Missing Controller');
 
   /// Bring the panel to [PanelState.expanded].
   ///
@@ -167,7 +167,7 @@ class PanelController {
                       from: currentPosition,
                       to: panel._metadata.expandedHeight),
           to: panel._metadata.expandedHeight)
-      : _printError();
+      : Future.error('Missing Controller');
 
   /// Set panel position WITHOUT animation.
   ///
@@ -190,7 +190,7 @@ class PanelController {
           duration:
               _getDuration(from: panel._metadata.currentHeight, to: value),
           to: value)
-      : _printError();
+      : Future.error('Missing Controller');
 
   /// Get Panel's height between [PanelSize.closedHeight] and
   /// [PanelSize.expandedHeight], given specific [percent] between 0.0 and 1.0.
@@ -267,8 +267,7 @@ class PanelController {
     }
 
     if ((!_PanelAnimation.isCleared) &&
-        (_PanelAnimation.animation != null) &&
-        (_PanelAnimation.animation.isAnimating)) {
+        (_PanelAnimation.animation?.isAnimating ?? false)) {
       return PanelState.animating;
     }
 
@@ -333,7 +332,7 @@ class PanelController {
   /// [sendResult] with a [NotificationListener].
   void throwResult({dynamic result}) {
     if (result != null && controlling && panel.widget.onThrowResult != null) {
-      panel.widget.onThrowResult(result);
+      panel.widget.onThrowResult!(result);
     }
   }
 
