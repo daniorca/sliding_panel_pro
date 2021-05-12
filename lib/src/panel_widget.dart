@@ -288,7 +288,7 @@ class SlidingPanel extends StatefulWidget {
     this.panelPoppingBehavior = PanelPoppingBehavior.POP_AFTER_TAP,
     this.panelClosedOptions = const PanelClosedOptions(),
     this.safeAreaConfig = const SafeAreaConfig.all(),
-    this.onPanelSlide = null,
+    this.onPanelSlide,
     this.onPanelStateChanged,
     this.onThrowResult,
   })  : this._isModal = false,

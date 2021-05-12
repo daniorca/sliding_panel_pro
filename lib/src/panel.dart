@@ -7,8 +7,8 @@ class _SlidingPanelState extends State<SlidingPanel>
 
   late PanelController _controller;
 
-  late PanelState _oldPanelState;
-  late PanelState _currentPanelState;
+  PanelState _oldPanelState = PanelState.indefinite;
+  PanelState _currentPanelState = PanelState.closed;
 
   GlobalKey _keyHeader = GlobalKey();
 
@@ -24,7 +24,7 @@ class _SlidingPanelState extends State<SlidingPanel>
 
   GlobalKey _keyContent = GlobalKey();
 
-  late Orientation _screenOrientation;
+  Orientation _screenOrientation = Orientation.landscape;
 
   Color _appBarIconsColor = Colors.white;
   List<Widget> _panelContentItems = [];
@@ -52,9 +52,9 @@ class _SlidingPanelState extends State<SlidingPanel>
   double maxWidthLandscape = double.infinity;
 
   // getters
-  PanelHeaderWidget? get header => widget.content.headerWidget;
+  PanelHeaderWidget get header => widget.content.headerWidget;
 
-  PanelFooterWidget? get footer => widget.content.footerWidget;
+  PanelFooterWidget get footer => widget.content.footerWidget;
 
   PanelCollapsedWidget get collapsed => widget.content.collapsedWidget;
 
@@ -132,7 +132,7 @@ class _SlidingPanelState extends State<SlidingPanel>
       // header provided and size calculated.
       // so, this height has to be added to all other heights.
 
-      final headerHeight = boxHeader?.size?.height ?? 0;
+      final headerHeight = boxHeader?.size?.height ?? size.closedHeight;
 
       setState(() {
         _toShowHeader = true;
@@ -320,7 +320,7 @@ class _SlidingPanelState extends State<SlidingPanel>
   void _panelHeightChangedListener() {
     if (mounted) setState(() {});
 
-    widget.onPanelSlide!.call(_metadata.currentHeight);
+    widget.onPanelSlide?.call(_metadata.currentHeight);
 
     _currentPanelState = _controller.currentState;
 
@@ -376,13 +376,13 @@ class _SlidingPanelState extends State<SlidingPanel>
             leftPadding = rightPadding = additionalBottomPadding = 0.0;
 
         // If footer top margin is given, add it to bottom padding
-        if ((footer?.decoration?.margin?.top ?? 0) > 0.0) {
-          additionalBottomPadding += footer?.decoration?.margin?.top ?? 0;
+        if ((footer.decoration.margin?.top ?? 0) > 0.0) {
+          additionalBottomPadding += footer.decoration.margin?.top ?? 0;
         }
 
         // If footer top margin is given, add it to bottom padding
-        if ((footer?.decoration?.margin?.bottom ?? 0) > 0.0) {
-          additionalBottomPadding += footer?.decoration?.margin?.bottom ?? 0;
+        if ((footer.decoration.margin?.bottom ?? 0) > 0.0) {
+          additionalBottomPadding += footer.decoration.margin?.bottom ?? 0;
         }
 
         if (_metadata.safeAreaConfig != null) {
@@ -472,7 +472,7 @@ class _SlidingPanelState extends State<SlidingPanel>
     super.didChangeDependencies();
 
     _appBarIconsColor =
-        (header?.decoration?.backgroundColor ?? Theme.of(context).canvasColor)
+        (header.decoration.backgroundColor ?? Theme.of(context).canvasColor)
                     .computeLuminance() >
                 0.5
             ? Colors.black
@@ -669,7 +669,7 @@ class _SlidingPanelState extends State<SlidingPanel>
     super.didUpdateWidget(oldWidget);
 
     _appBarIconsColor =
-        (header?.decoration.backgroundColor ?? Theme.of(context).canvasColor)
+        (header.decoration.backgroundColor ?? Theme.of(context).canvasColor)
                     .computeLuminance() >
                 0.5
             ? Colors.black
@@ -821,40 +821,39 @@ class _SlidingPanelState extends State<SlidingPanel>
         title: Material(
           type: MaterialType.transparency,
           child: GestureDetector(
-            onTap: () => header?.onTap?.call(),
+            onTap: () => header.onTap?.call(),
             child: Container(
               key: _keyHeader,
               decoration: BoxDecoration(
-                border: header?.decoration.border,
-                borderRadius: header?.decoration.borderRadius,
-                color: header?.decoration.backgroundColor ??
+                border: header.decoration.border,
+                borderRadius: header.decoration.borderRadius,
+                color: header.decoration.backgroundColor ??
                     Theme.of(context).canvasColor,
-                gradient: header?.decoration.gradient,
-                image: header?.decoration.image,
-                backgroundBlendMode: header?.decoration.backgroundBlendMode,
+                gradient: header.decoration.gradient,
+                image: header.decoration.image,
+                backgroundBlendMode: header.decoration.backgroundBlendMode,
               ),
-//              padding: header.decoration.padding,
               padding: EdgeInsets.only(
-                top: ((header?.decoration?.padding?.top ?? 0) +
-                    (header?.options?.primary ?? false
+                top: ((header.decoration.padding?.top ?? 0) +
+                    (header.options.primary
                         ? MediaQuery.of(context).padding.top
                         : 0)),
-                bottom: header?.decoration?.padding?.bottom ?? 0,
-                left: header?.decoration?.padding?.left ?? 0,
-                right: header?.decoration?.padding?.right ?? 0,
+                bottom: header.decoration.padding?.bottom ?? 0,
+                left: header.decoration.padding?.left ?? 0,
+                right: header.decoration.padding?.right ?? 0,
               ),
-              margin: header?.decoration.margin,
-              child: header?.headerContent,
+              margin: header.decoration.margin,
+              child: header.headerContent,
             ),
           ),
         ),
-        shape: (header?.decoration?.borderRadius != null)
+        shape: (header.decoration.borderRadius != null)
             ? RoundedRectangleBorder(
-                borderRadius: header?.decoration?.borderRadius ?? BorderRadius.zero)
+                borderRadius: header.decoration.borderRadius ?? BorderRadius.zero)
             : null,
         titleSpacing: 0,
         backgroundColor:
-            header?.decoration.backgroundColor ?? Theme.of(context).canvasColor,
+            header.decoration.backgroundColor ?? Theme.of(context).canvasColor,
         iconTheme: IconThemeData(color: _appBarIconsColor),
         automaticallyImplyLeading: false,
         toolbarHeight: _calculatedHeaderHeight,
@@ -865,37 +864,37 @@ class _SlidingPanelState extends State<SlidingPanel>
         expandedHeight: null,
         //
         primary: false, // Handled in Padding
-        centerTitle: header?.options.centerTitle,
-        elevation: header?.options.elevation,
-        forceElevated: header?.options?.forceElevated ?? false,
-        pinned: header?.options?.alwaysOnTop ?? false,
-        floating: header?.options?.floating ?? false,
-        snap: header?.options?.floating ?? false,
-        leading: header?.options.leading == null
+        centerTitle: header.options.centerTitle,
+        elevation: header.options.elevation,
+        forceElevated: header.options.forceElevated,
+        pinned: header.options.alwaysOnTop,
+        floating: header.options.floating,
+        snap: header.options.floating,
+        leading: header.options.leading == null
             ? null
             : Padding(
                 padding: EdgeInsets.only(
-                    top: header?.options?.primary ?? false
+                    top: header.options.primary
                         ? MediaQuery.of(context).padding.top
                         : 0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: header?.options?.iconsAlignment ?? MainAxisAlignment.start,
+                  mainAxisAlignment: header.options.iconsAlignment,
                   children: <Widget>[
-                    Flexible(child: header?.options?.leading ?? Container())
+                    Flexible(child: header.options.leading ?? Container())
                   ],
                 ),
               ),
         actions: [
-          for (var action in header?.options?.trailing ?? [])
+          for (var action in header.options.trailing ?? [])
             Padding(
               padding: EdgeInsets.only(
-                  top: header?.options?.primary ?? false
+                  top: header.options.primary
                       ? MediaQuery.of(context).padding.top
                       : 0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: header?.options?.iconsAlignment ?? MainAxisAlignment.start,
+                mainAxisAlignment: header.options.iconsAlignment,
                 children: <Widget>[Flexible(child: action)],
               ),
             ),
@@ -931,7 +930,7 @@ class _SlidingPanelState extends State<SlidingPanel>
             child: Opacity(
               opacity: _getCollapsedOpacity(this),
               child: IgnorePointer(
-                ignoring: collapsed.hideInExpandedOnly
+                ignoring: (collapsed.hideInExpandedOnly)
                     ? _metadata.isExpanded
                     : _metadata.isCollapsed,
                 child: collapsed.collapsedContent ?? Container(),
@@ -963,19 +962,19 @@ class _SlidingPanelState extends State<SlidingPanel>
           _onPanelDragEnd(this, -(details.primaryVelocity ?? 0)),
       child: Container(
           decoration: BoxDecoration(
-            border: footer?.decoration?.border,
-            borderRadius: footer?.decoration?.borderRadius,
-            boxShadow: footer?.decoration?.boxShadows,
-            color: footer?.decoration?.backgroundColor ??
+            border: footer.decoration.border,
+            borderRadius: footer.decoration.borderRadius,
+            boxShadow: footer.decoration.boxShadows,
+            color: footer.decoration.backgroundColor ??
                 Theme.of(context).canvasColor,
-            gradient: footer?.decoration?.gradient,
-            image: footer?.decoration?.image,
-            backgroundBlendMode: footer?.decoration?.backgroundBlendMode,
+            gradient: footer.decoration.gradient,
+            image: footer.decoration.image,
+            backgroundBlendMode: footer.decoration.backgroundBlendMode,
           ),
-          padding: footer?.decoration?.padding,
-          margin: footer?.decoration?.margin,
+          padding: footer.decoration.padding,
+          margin: footer.decoration.margin,
           height: footerHeight,
-          child: footer?.footerContent),
+          child: footer.footerContent),
     );
   }
 
@@ -996,7 +995,7 @@ class _SlidingPanelState extends State<SlidingPanel>
               controller: _scrollController,
               slivers: <Widget>[
                 // header
-                if (header?.headerContent != null) _headerSliver,
+                if (header.headerContent != null) _headerSliver,
 
                 // panel
                 SliverOpacity(
@@ -1021,7 +1020,7 @@ class _SlidingPanelState extends State<SlidingPanel>
         if (!_metadata.isTwoStatePanel) _collapsedWidget,
 
         // footer
-        if (footer?.footerContent != null) _footerWidget,
+        if (footer.footerContent != null) _footerWidget,
       ],
     );
   }
@@ -1029,13 +1028,13 @@ class _SlidingPanelState extends State<SlidingPanel>
   Widget get _offStagedFooter => Offstage(
         child: Container(
           key: _keyFooter,
-          margin: footer?.decoration.margin,
-          padding: footer?.decoration.padding,
+          margin: footer.decoration.margin,
+          padding: footer.decoration.padding,
           decoration: BoxDecoration(
-            border: footer?.decoration.border,
+            border: footer.decoration.border,
           ),
           child: Container(
-            child: footer?.footerContent,
+            child: footer.footerContent,
           ),
         ),
       );
@@ -1050,7 +1049,7 @@ class _SlidingPanelState extends State<SlidingPanel>
               ..._panelContentItems,
               SizedBox(
                 // also add footer's margin, NOT padding
-                height: (footer?.decoration?.margin?.vertical ?? 0),
+                height: (footer.decoration.margin?.vertical ?? 0),
               )
             ],
           ),
@@ -1119,7 +1118,7 @@ class _SlidingPanelState extends State<SlidingPanel>
       children: <Widget>[
         // for calculating the size.
 
-        if (footer?.footerContent != null) _offStagedFooter,
+        if (footer.footerContent != null) _offStagedFooter,
         // needed as we change footer's height
 
         Container(child: _offStagedContent),

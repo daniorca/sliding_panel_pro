@@ -82,7 +82,7 @@ Future<T?> showModalSlidingPanel<T>(
   if (panel != null) {
     SlidingPanel _panel = panel(context);
 
-    return Future.value(Navigator.of(context).push(
+    return Navigator.of(context).push(
       _SlidingPanelModalRoute(
         duration: _panel.duration,
         panelRouteBuilder: (route) {
@@ -121,7 +121,7 @@ Future<T?> showModalSlidingPanel<T>(
           );
         },
       ),
-    ));
+    );
   }
   return Future.value(null);
 }

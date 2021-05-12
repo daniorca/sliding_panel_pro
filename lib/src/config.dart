@@ -149,7 +149,7 @@ class PanelContent {
   /// can be shown here, that hints user to scroll.
   ///
   /// If the height of this widget is not calculatable, it will NOT be shown.
-  final PanelHeaderWidget? headerWidget;
+  final PanelHeaderWidget headerWidget;
 
   /// The widget that will be shown below the panel,
   /// regardless of [PanelState] (A persistent widget).
@@ -159,7 +159,7 @@ class PanelContent {
   /// Note that, this will only be shown, when panel is expanded.
   ///
   /// If the height of this widget is not calculatable, it will NOT be shown.
-  final PanelFooterWidget? footerWidget;
+  final PanelFooterWidget footerWidget;
 
   /// The widgets that are shown as the panel content.
   /// When collapsed, content till [collapsedWidget] is shown.
@@ -794,10 +794,10 @@ class SafeAreaConfig {
   /// Also, don't remove padding from the content.
   ///
   /// This is the default.
-  const SafeAreaConfig.all({bool removePaddingFromContent = false, bool bodyHasSlivers = false})
+  const SafeAreaConfig.all({bool? removePaddingFromContent, bool? bodyHasSlivers})
       : this.top = true,
         this.bottom = true,
         this.sides = true,
-        this.removePaddingFromContent = removePaddingFromContent,
-        this.bodyHasSlivers = bodyHasSlivers;
+        this.removePaddingFromContent = removePaddingFromContent ?? false,
+        this.bodyHasSlivers = bodyHasSlivers ?? false;
 }

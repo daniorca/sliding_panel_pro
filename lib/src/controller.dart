@@ -5,7 +5,7 @@ part of sliding_panel_pro;
 /// Attaching the same controller to different panels
 /// would simply control the latest attached panel only.
 class PanelController {
-  late _SlidingPanelState panel;
+  _SlidingPanelState? panel;
 
   bool _controlling = false;
 
@@ -16,26 +16,26 @@ class PanelController {
   /// this controller as a parameter in [SlidingPanel.panelController].
   bool get controlling => _controlling;
 
-  late Duration _durationCollapsed;
-  late Duration _durationExpanded;
+  Duration _durationCollapsed = Duration();
+  Duration _durationExpanded = Duration();
 
   double _diffHeight = 0.0;
 
   void _updateDurations() {
     // Duration is calculated from dismissed state to expanded.
-    _diffHeight = panel._metadata.expandedHeight - 0.0;
+    _diffHeight = panel!._metadata.expandedHeight - 0.0;
 
     double diffCollapsed =
-        panel._metadata.collapsedHeight - panel._metadata.closedHeight;
+        panel!._metadata.collapsedHeight - panel!._metadata.closedHeight;
 
     double diffExpanded =
-        panel._metadata.expandedHeight - panel._metadata.collapsedHeight;
+        panel!._metadata.expandedHeight - panel!._metadata.collapsedHeight;
 
     double _durCollapsed =
-        ((diffCollapsed * panel.widget.duration.inMilliseconds) / _diffHeight);
+        ((diffCollapsed * panel!.widget.duration.inMilliseconds) / _diffHeight);
 
     double _durExpanded =
-        ((diffExpanded * panel.widget.duration.inMilliseconds) / _diffHeight);
+        ((diffExpanded * panel!.widget.duration.inMilliseconds) / _diffHeight);
 
     if (_durCollapsed.isInfinite || _durCollapsed.isNaN) {
       _durationCollapsed = Duration(milliseconds: 0);
@@ -54,7 +54,7 @@ class PanelController {
 
   Duration _getDuration({double from = 0, double to = 0}) {
     return Duration(
-        milliseconds: (((((to - from) * panel.widget.duration.inMilliseconds) /
+        milliseconds: (((((to - from) * panel!.widget.duration.inMilliseconds) /
                     _diffHeight)
                 .floor()
                 .toInt())
@@ -62,7 +62,7 @@ class PanelController {
   }
 
   void _control(_SlidingPanelState panel) {
-    //this.panel = null;
+    this.panel = null;
 
     this.panel = panel;
 
@@ -81,8 +81,8 @@ class PanelController {
   ///
   /// This is useful when you have changed (replaced) the [PanelContent].
   /// and want the panel to adjust its size again.
-  void rebuild({required VoidCallback then}) {
-    if (controlling) panel.rebuild(then: then);
+  void rebuild({VoidCallback? then}) {
+    if (controlling) panel!.rebuild(then: then);
   }
 
   /// Used to dismiss the panel.
@@ -100,7 +100,7 @@ class PanelController {
   /// Returned future is completed when the panel is dismissed.
   Future<Null> dismiss() async {
     if (controlling)
-      await _setPanelPosition(panel,
+      await _setPanelPosition(panel!,
           duration: _getDuration(from: currentPosition, to: 0.0),
           to: 0.0,
           shouldClamp: false);
@@ -115,19 +115,19 @@ class PanelController {
   /// (Animates to [PanelSize.closedHeight]).
   Future<Null> close() async {
     if (controlling) {
-      if (currentPosition == 0.0 && (panel._metadata.closedHeight > 0.0)) {
+      if (currentPosition == 0.0 && (panel!._metadata.closedHeight > 0.0)) {
         // if closing from dismissed, DONT notify results yet
-        panel._shouldNotifyOnClose = false;
+        panel!._shouldNotifyOnClose = false;
       }
 
-      return _setPanelPosition(panel,
+      return _setPanelPosition(panel!,
           duration: currentState == PanelState.collapsed
               ? _durationCollapsed
               : currentState == PanelState.expanded
-                  ? panel.widget.duration
+                  ? panel!.widget.duration
                   : _getDuration(
-                      from: currentPosition, to: panel._metadata.closedHeight),
-          to: panel._metadata.closedHeight);
+                      from: currentPosition, to: panel!._metadata.closedHeight),
+          to: panel!._metadata.closedHeight);
     } else {
       _printError();
     }
@@ -139,17 +139,17 @@ class PanelController {
   ///
   /// (Animates to [PanelSize.collapsedHeight]).
   Future<Null> collapse() async => controlling
-      ? panel._metadata.isTwoStatePanel
+      ? panel!._metadata.isTwoStatePanel
           ? null
-          : _setPanelPosition(panel,
+          : _setPanelPosition(panel!,
               duration: currentState == PanelState.closed
                   ? _durationCollapsed
                   : currentState == PanelState.expanded
                       ? _durationExpanded
                       : _getDuration(
                           from: currentPosition,
-                          to: panel._metadata.collapsedHeight),
-              to: panel._metadata.collapsedHeight)
+                          to: panel!._metadata.collapsedHeight),
+              to: panel!._metadata.collapsedHeight)
       : Future.error('Missing Controller');
 
   /// Bring the panel to [PanelState.expanded].
@@ -158,15 +158,15 @@ class PanelController {
   ///
   /// (Animates to [PanelSize.expandedHeight]).
   Future<Null> expand() async => controlling
-      ? _setPanelPosition(panel,
+      ? _setPanelPosition(panel!,
           duration: currentState == PanelState.collapsed
               ? _durationExpanded
               : currentState == PanelState.closed
-                  ? panel.widget.duration
+                  ? panel!.widget.duration
                   : _getDuration(
                       from: currentPosition,
-                      to: panel._metadata.expandedHeight),
-          to: panel._metadata.expandedHeight)
+                      to: panel!._metadata.expandedHeight),
+          to: panel!._metadata.expandedHeight)
       : Future.error('Missing Controller');
 
   /// Set panel position WITHOUT animation.
@@ -176,7 +176,7 @@ class PanelController {
   /// Given [value] is clamped between
   /// [PanelSize.closedHeight] and [PanelSize.expandedHeight].
   void setPanelPosition(double value) => controlling
-      ? _setPanelPosition(panel, duration: Duration(milliseconds: 0), to: value)
+      ? _setPanelPosition(panel!, duration: Duration(milliseconds: 0), to: value)
       : _printError();
 
   /// Set panel position WITH animation.
@@ -186,9 +186,9 @@ class PanelController {
   /// Given [value] is clamped between
   /// [PanelSize.closedHeight] and [PanelSize.expandedHeight].
   Future<Null> setAnimatedPanelPosition(double value) async => controlling
-      ? _setPanelPosition(panel,
+      ? _setPanelPosition(panel!,
           duration:
-              _getDuration(from: panel._metadata.currentHeight, to: value),
+              _getDuration(from: panel!._metadata.currentHeight, to: value),
           to: value)
       : Future.error('Missing Controller');
 
@@ -213,9 +213,9 @@ class PanelController {
       {bool forDismissed = false}) {
     double min = 0.0;
 
-    if (!forDismissed) min = panel._metadata.closedHeight;
+    if (!forDismissed) min = panel!._metadata.closedHeight;
 
-    double max = panel._metadata.expandedHeight;
+    double max = panel!._metadata.expandedHeight;
 
     double value = ((percent * (max - min)) + min);
 
@@ -258,7 +258,7 @@ class PanelController {
   ///
   /// Returns 0.0 if panel is [PanelState.dismissed].
   double get currentPosition =>
-      controlling ? panel._metadata.currentHeight : 0.0;
+      controlling ? panel!._metadata.currentHeight : 0.0;
 
   /// Returns the current [PanelState] of the panel.
   PanelState get currentState {
@@ -267,18 +267,19 @@ class PanelController {
     }
 
     if ((!_PanelAnimation.isCleared) &&
+        (_PanelAnimation.animation != null) &&
         (_PanelAnimation.animation?.isAnimating ?? false)) {
       return PanelState.animating;
     }
 
-    _PanelMetadata data = panel._metadata;
+    _PanelMetadata data = panel!._metadata;
 
     if (data.currentHeight == 0.0 && data.closedHeight != 0.0)
       return PanelState.dismissed;
     else if (data.currentHeight == data.closedHeight)
       return PanelState.closed;
     else if ((data.currentHeight == data.collapsedHeight) &&
-        (!panel._metadata.isTwoStatePanel))
+        (!panel!._metadata.isTwoStatePanel))
       return PanelState.collapsed;
     else if (data.currentHeight == data.expandedHeight)
       return PanelState.expanded;
@@ -294,7 +295,7 @@ class PanelController {
   /// when user taps some item inside panel.
   void sendResult({dynamic result}) {
     if (result != null && controlling)
-      SlidingPanelResult(result: result).dispatch(panel.context);
+      SlidingPanelResult(result: result).dispatch(panel!.context);
   }
 
   /// Dismisses this panel and then triggers a [Notification] with given result.
@@ -312,7 +313,7 @@ class PanelController {
   /// This can be thought of as example of [Navigator.pop] with result.
   Future<Null> popWithResult(
       {dynamic result, bool shouldCloseOnly = false}) async {
-    panel._shouldNotifyOnClose = false;
+    panel!._shouldNotifyOnClose = false;
 
     if (shouldCloseOnly)
       return close().then((_) {
@@ -331,8 +332,8 @@ class PanelController {
   /// Useful when you don't want to use
   /// [sendResult] with a [NotificationListener].
   void throwResult({dynamic result}) {
-    if (result != null && controlling && panel.widget.onThrowResult != null) {
-      panel.widget.onThrowResult!(result);
+    if (result != null && controlling && panel!.widget.onThrowResult != null) {
+      panel!.widget.onThrowResult!(result);
     }
   }
 
@@ -350,7 +351,7 @@ class PanelController {
   /// [popWithResult] with a [NotificationListener].
   Future<Null> popWithThrowResult(
       {dynamic result, bool shouldCloseOnly = false}) async {
-    panel._shouldNotifyOnClose = false;
+    panel!._shouldNotifyOnClose = false;
 
     if (shouldCloseOnly)
       return close().then((_) {
@@ -368,7 +369,7 @@ class PanelController {
   PanelSizeData get sizeData {
     if (!controlling) return PanelSizeData._empty();
 
-    _PanelMetadata metadata = panel._metadata;
+    _PanelMetadata metadata = panel!._metadata;
 
     return PanelSizeData._(
       closedHeight: metadata.closedHeight,
@@ -385,6 +386,6 @@ class PanelController {
   PanelScrollData get scrollData {
     if (!controlling) return PanelScrollData._empty();
 
-    return PanelScrollData._(panel._scrollController);
+    return PanelScrollData._(panel!._scrollController);
   }
 }

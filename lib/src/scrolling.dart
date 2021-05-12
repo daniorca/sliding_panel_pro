@@ -9,7 +9,7 @@ class _PanelScrollPosition extends ScrollPositionWithSingleContext {
   final _SlidingPanelState panel;
 
   _PanelScrollPosition({
-    ScrollPhysics physics = const AlwaysScrollableScrollPhysics(),
+    ScrollPhysics physics = const ScrollPhysics(),
     required ScrollContext context,
     double initPix = 0.0,
     bool keepScroll = true,

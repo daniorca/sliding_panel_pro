@@ -197,12 +197,12 @@ class _PanelSnapData {
       );
 
       void _tick() {
-        scrollPos.metadata.currentHeight = _PanelAnimation.animation?.value ?? 0;
+        scrollPos.metadata.currentHeight = _PanelAnimation.animation!.value;
         // set panel's position
       }
 
-      _PanelAnimation.animation?.value = currentH;
-      _PanelAnimation.animation?.addListener(_tick);
+      _PanelAnimation.animation!.value = currentH;
+      _PanelAnimation.animation!.addListener(_tick);
 
       if (scrollPos.metadata.totalHeight != 0.0 &&
           scrollPos.metadata.totalHeight != double.infinity &&
@@ -216,12 +216,9 @@ class _PanelSnapData {
 
       // animate
       _PanelAnimation.isCleared = false;
-      if (_PanelAnimation.animation != null) {
-        _PanelAnimation.animation!
+      _PanelAnimation.animation!
           .fling(velocity: flingVelocity)
           .whenCompleteOrCancel(() {});
-      }
-      
     }
   }
 }
@@ -244,9 +241,9 @@ void _scrollPanel(
   double lastDelta = 0;
 
   void _tick() {
-    final double currentDelta = _PanelAnimation.animation?.value ?? 0 - lastDelta;
+    final double currentDelta = _PanelAnimation.animation!.value - lastDelta;
 
-    lastDelta = _PanelAnimation.animation?.value ?? 0;
+    lastDelta = _PanelAnimation.animation!.value;
 
     scrollPos.metadata.addPixels(currentDelta, shouldMultiply: false);
 
@@ -255,21 +252,18 @@ void _scrollPanel(
       (velocity < 0 && scrollPos.metadata.isClosed) 
     ) {
       // after dragging, if start or end reached
-      if (_PanelAnimation.animation != null) {
-        velocity = ((_PanelAnimation.animation?.velocity ?? 0) +
+      velocity = _PanelAnimation.animation!.velocity +
           (scrollPos.physics.tolerance.velocity *
-              (_PanelAnimation.animation?.velocity?.sign ?? 0))).toDouble();
+              _PanelAnimation.animation!.velocity.sign).toDouble();
 
-        _PanelAnimation.animation?.stop();
-      }
+        _PanelAnimation.animation!.stop();
     }
   }
 
   _PanelAnimation.isCleared = false;
-  if (_PanelAnimation.animation != null) {
-    _PanelAnimation.animation?.addListener(_tick);
-    _PanelAnimation.animation?.animateWith(simulation).whenCompleteOrCancel(() {});
-  }
+  _PanelAnimation.animation!
+    ..addListener(_tick)
+    ..animateWith(simulation).whenCompleteOrCancel(() {});
 }
 
 Future<Null> _setPanelPosition(
@@ -296,15 +290,15 @@ Future<Null> _setPanelPosition(
     );
 
     void _tick() {
-      scrollPos.metadata.currentHeight = _PanelAnimation.animation?.value ?? 0;
+      scrollPos.metadata.currentHeight = _PanelAnimation.animation!.value;
     }
 
-    _PanelAnimation.animation?.value = scrollPos.metadata.currentHeight;
-    _PanelAnimation.animation?.addListener(_tick);
+    _PanelAnimation.animation!.value = scrollPos.metadata.currentHeight;
+    _PanelAnimation.animation!.addListener(_tick);
 
     _PanelAnimation.isCleared = false;
 
-    await _PanelAnimation.animation?.animateTo(
+    await _PanelAnimation.animation!.animateTo(
       to,
       curve: panel.widget.curve,
       duration: duration,
@@ -349,26 +343,26 @@ double _getBackdropOpacityAmount(_SlidingPanelState panel) {
 
 /// returns amount of color the backdrop should
 /// apply when panel slides.
-Color _getBackdropColor(_SlidingPanelState panel) {
+Color? _getBackdropColor(_SlidingPanelState panel) {
   if (panel.widget.backdropConfig.draggableInClosed) {
     // If closedHeight is not 0.0 and still currently it is,
     // that's a dismissed panel. Don't allow dragging in it.
     if ((panel._metadata.currentHeight == 0.0) &&
-        (panel._metadata.closedHeight != 0.0)) return Color(0xFFFFFF);
+        (panel._metadata.closedHeight != 0.0)) return null;
     return panel.widget.backdropConfig.shadowColor;
   }
 
   if (panel.widget.backdropConfig.effectInCollapsedMode) {
     if (panel._controller.percentPosition(
             panel._metadata.closedHeight, panel._metadata.expandedHeight) <=
-        0.0) return Color(0xFFFFFF);
+        0.0) return null;
 
     return panel.widget.backdropConfig.shadowColor;
   } else {
     if (panel._controller.currentPosition > panel._metadata.collapsedHeight) {
       return panel.widget.backdropConfig.shadowColor;
     }
-    return Color(0xFFFFFF);
+    return null;
   }
 }
 
@@ -614,8 +608,8 @@ Future<bool> _decidePop(_SlidingPanelState panel) async {
   }
 }
 
-InitialPanelState _decideInitStateForModal({_PanelMetadata? metadata}) {
-  InitialPanelState decidedState = metadata?.initialPanelState ?? InitialPanelState.closed;
+InitialPanelState _decideInitStateForModal({required _PanelMetadata metadata}) {
+  InitialPanelState decidedState = metadata.initialPanelState;
 
   if (decidedState == InitialPanelState.expanded) {
     // dont think about expanded
@@ -627,10 +621,10 @@ InitialPanelState _decideInitStateForModal({_PanelMetadata? metadata}) {
     decidedState = InitialPanelState.closed;
   }
 
-  if (metadata?.isTwoStatePanel ?? false) {
+  if (metadata.isTwoStatePanel) {
     // handle cases for a two-state panel
     if (decidedState == InitialPanelState.closed) {
-      if (metadata?.closedHeight == 0.0) {
+      if (metadata.closedHeight == 0.0) {
         // because it doesn't show anything
         return InitialPanelState.expanded;
       }
@@ -645,7 +639,7 @@ InitialPanelState _decideInitStateForModal({_PanelMetadata? metadata}) {
     return InitialPanelState.expanded;
   } else {
     if (decidedState == InitialPanelState.closed) {
-      if (metadata?.closedHeight == 0.0) {
+      if (metadata.closedHeight == 0.0) {
         // because it doesn't show anything
         // just assume, it should collapse
         decidedState = InitialPanelState.collapsed;
@@ -655,7 +649,7 @@ InitialPanelState _decideInitStateForModal({_PanelMetadata? metadata}) {
     }
     if (decidedState == InitialPanelState.collapsed) {
       // collapse only if PanelCollapsedWidget given
-      if (metadata?.collapsedHeight == 0.0) {
+      if (metadata.collapsedHeight == 0.0) {
         return InitialPanelState.expanded;
       }
       return InitialPanelState.collapsed;

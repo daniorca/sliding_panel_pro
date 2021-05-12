@@ -1,5 +1,9 @@
 # sliding_panel_pro changelog
 
+## [1.0.0-nullsafety.2] - May 12, 2021
+
+- Fixing code to be null-safety aware.
+
 ## [1.0.0-nullsafety.1] - Apr 29, 2021
 
 - Updated code to be null-safety aware.
