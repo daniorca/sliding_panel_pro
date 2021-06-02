@@ -1,5 +1,9 @@
 # sliding_panel_pro changelog
 
+## [1.0.0-nullsafety.3] - Jun 2, 2021
+
+- Verifying widget is mounted before calling setState().
+
 ## [1.0.0-nullsafety.2] - May 12, 2021
 
 - Fixing code to be null-safety aware.

@@ -128,11 +128,11 @@ class _SlidingPanelState extends State<SlidingPanel>
         (_keyHeader.currentContext?.findRenderObject() as RenderBox?) ?? null;
 
     // calculate header height
-    if ((boxHeader?.size?.height ?? null) != null) {
+    if ((boxHeader?.size.height ?? null) != null) {
       // header provided and size calculated.
       // so, this height has to be added to all other heights.
 
-      final headerHeight = boxHeader?.size?.height ?? size.closedHeight;
+      final headerHeight = boxHeader?.size.height ?? size.closedHeight;
 
       setState(() {
         _toShowHeader = true;
@@ -153,11 +153,11 @@ class _SlidingPanelState extends State<SlidingPanel>
         (_keyFooter.currentContext?.findRenderObject() as RenderBox?) ?? null;
 
     // calculate footer height
-    if ((boxFooter?.size?.height ?? null) != null) {
+    if ((boxFooter?.size.height ?? null) != null) {
       // footer provided and size calculated.
       // so, this height has to be added to all other heights.
 
-      final footerHeight = boxFooter?.size?.height ?? 0;
+      final footerHeight = boxFooter?.size.height ?? 0;
 
       setState(() {
         _toShowFooter = true;
@@ -187,7 +187,8 @@ class _SlidingPanelState extends State<SlidingPanel>
 
     // find all render boxes
     final RenderBox? boxCollapsed =
-        (_keyCollapsed.currentContext?.findRenderObject() as RenderBox?) ?? null;
+        (_keyCollapsed.currentContext?.findRenderObject() as RenderBox?) ??
+            null;
 
     final RenderBox? boxContent =
         (_keyContent.currentContext?.findRenderObject() as RenderBox?) ?? null;
@@ -212,10 +213,10 @@ class _SlidingPanelState extends State<SlidingPanel>
     if ((!_metadata.isTwoStatePanel) && (autoSizing.autoSizeCollapsed)) {
       // not for two-state panels, as they don't have this widget.
 
-      if ((boxCollapsed?.size?.height ?? null) != null) {
+      if ((boxCollapsed?.size.height ?? null) != null) {
         // collapsedWidget provided and size calculated.
 
-        final colHeight = boxCollapsed?.size?.height ?? 0;
+        final colHeight = boxCollapsed?.size.height ?? 0;
 
         if (colHeight < _metadata.constrainedHeight) {
           // if it is less than screen's height.
@@ -238,11 +239,11 @@ class _SlidingPanelState extends State<SlidingPanel>
     }
 
     // calculate panel height
-    if (((boxContent?.size?.height ?? null) != null) &&
+    if (((boxContent?.size.height ?? null) != null) &&
         (autoSizing.autoSizeExpanded)) {
       // panelContent provided and size calculated.
 
-      var expHeight = boxContent?.size?.height ?? 0;
+      var expHeight = boxContent?.size.height ?? 0;
 
       var mediaQueryPadding = MediaQuery.of(context).padding.vertical;
       if (_metadata.safeAreaConfig.bodyHasSlivers)
@@ -300,7 +301,6 @@ class _SlidingPanelState extends State<SlidingPanel>
         }
 
         if ((autoSizing.useMinExpanded) &&
-            (_metadata.providedExpandedHeight != null) &&
             (_metadata.providedExpandedHeight > 0.0 &&
                 _metadata.providedExpandedHeight <= 1.0)) {
           double _height = min(
@@ -370,100 +370,102 @@ class _SlidingPanelState extends State<SlidingPanel>
 
   void _applyPaddings() {
     SchedulerBinding.instance?.addPostFrameCallback((x) {
-      setState(() {
-        // Initialize with 0.
-        topPadding = bottomPadding =
-            leftPadding = rightPadding = additionalBottomPadding = 0.0;
+      if (this.mounted) {
+        setState(() {
+          // Initialize with 0.
+          topPadding = bottomPadding =
+              leftPadding = rightPadding = additionalBottomPadding = 0.0;
 
-        // If footer top margin is given, add it to bottom padding
-        if ((footer.decoration.margin?.top ?? 0) > 0.0) {
-          additionalBottomPadding += footer.decoration.margin?.top ?? 0;
-        }
+          // If footer top margin is given, add it to bottom padding
+          if ((footer.decoration.margin?.top ?? 0) > 0.0) {
+            additionalBottomPadding += footer.decoration.margin?.top ?? 0;
+          }
 
-        // If footer top margin is given, add it to bottom padding
-        if ((footer.decoration.margin?.bottom ?? 0) > 0.0) {
-          additionalBottomPadding += footer.decoration.margin?.bottom ?? 0;
-        }
+          // If footer top margin is given, add it to bottom padding
+          if ((footer.decoration.margin?.bottom ?? 0) > 0.0) {
+            additionalBottomPadding += footer.decoration.margin?.bottom ?? 0;
+          }
 
-        if (_metadata.safeAreaConfig != null) {
-          // Additional padding required.
-          double additionalTopPadding = 0.0;
-          double additionalLeftPadding = 0.0;
-          double additionalRightPadding = 0.0;
+          if (_metadata.safeAreaConfig != null) {
+            // Additional padding required.
+            double additionalTopPadding = 0.0;
+            double additionalLeftPadding = 0.0;
+            double additionalRightPadding = 0.0;
 
-          if (_metadata.safeAreaConfig.bottom)
-            bottomPadding = MediaQuery.of(context).padding.bottom;
-          else
-            bottomPadding = 0.0;
+            if (_metadata.safeAreaConfig.bottom)
+              bottomPadding = MediaQuery.of(context).padding.bottom;
+            else
+              bottomPadding = 0.0;
 
-          if (_metadata.safeAreaConfig.sides) {
-            leftPadding = MediaQuery.of(context).padding.left;
-            rightPadding = MediaQuery.of(context).padding.right;
+            if (_metadata.safeAreaConfig.sides) {
+              leftPadding = MediaQuery.of(context).padding.left;
+              rightPadding = MediaQuery.of(context).padding.right;
 
-            // If left margin is given, add it to right padding
-            if ((decoration.margin?.left ?? 0) > 0.0) {
-              additionalRightPadding += decoration.margin?.left ?? 0;
-            }
+              // If left margin is given, add it to right padding
+              if ((decoration.margin?.left ?? 0) > 0.0) {
+                additionalRightPadding += decoration.margin?.left ?? 0;
+              }
 
-            // If right margin is given, add it to left padding
-            if ((decoration.margin?.right ?? 0) > 0.0) {
-              additionalLeftPadding += decoration.margin?.right ?? 0;
-            }
-          } else
-            leftPadding = rightPadding = 0.0;
+              // If right margin is given, add it to left padding
+              if ((decoration.margin?.right ?? 0) > 0.0) {
+                additionalLeftPadding += decoration.margin?.right ?? 0;
+              }
+            } else
+              leftPadding = rightPadding = 0.0;
 
-          if (_metadata.safeAreaConfig.top) {
-            double tempTopPadding = MediaQuery.of(context).padding.top;
+            if (_metadata.safeAreaConfig.top) {
+              double tempTopPadding = MediaQuery.of(context).padding.top;
 
-            // If AVAILABLE height is more than screen height, just apply padding
-            if (_metadata.totalHeight >= _metadata.constrainedHeight) {
-              topPadding = MediaQuery.of(context).padding.top;
-            } else {
-              if ((_metadata.constrainedHeight - tempTopPadding) >
-                  _metadata.totalHeight) {
-                // If removing padding space from screen's height would exceed
-                // available height, apply no padding
-                topPadding = 0.0;
+              // If AVAILABLE height is more than screen height, just apply padding
+              if (_metadata.totalHeight >= _metadata.constrainedHeight) {
+                topPadding = MediaQuery.of(context).padding.top;
               } else {
-                // apply partial padding
-                // apply in a manner, which is:
-                // min(actual padding, available height - (screen's height - actual padding))
-                topPadding = min(
-                    tempTopPadding,
-                    (_metadata.totalHeight -
-                            (_metadata.constrainedHeight - tempTopPadding))
-                        .abs());
+                if ((_metadata.constrainedHeight - tempTopPadding) >
+                    _metadata.totalHeight) {
+                  // If removing padding space from screen's height would exceed
+                  // available height, apply no padding
+                  topPadding = 0.0;
+                } else {
+                  // apply partial padding
+                  // apply in a manner, which is:
+                  // min(actual padding, available height - (screen's height - actual padding))
+                  topPadding = min(
+                      tempTopPadding,
+                      (_metadata.totalHeight -
+                              (_metadata.constrainedHeight - tempTopPadding))
+                          .abs());
+                }
               }
-            }
 
-            if (isModal) {
-              // This calculation is needed here. Because, if modal panel needs bottom padding,
-              // top padding would be less to avoid intrusions.
-              if ((_metadata.totalHeight + tempTopPadding + bottomPadding) >=
-                  (_metadata.constrainedHeight)) {
-                topPadding += bottomPadding;
+              if (isModal) {
+                // This calculation is needed here. Because, if modal panel needs bottom padding,
+                // top padding would be less to avoid intrusions.
+                if ((_metadata.totalHeight + tempTopPadding + bottomPadding) >=
+                    (_metadata.constrainedHeight)) {
+                  topPadding += bottomPadding;
+                }
               }
-            }
 
-            // If bottom margin is given, add it to top padding
-            if ((decoration.margin?.bottom ?? 0) > 0.0) {
-              additionalTopPadding += decoration.margin?.bottom ?? 0;
-            }
+              // If bottom margin is given, add it to top padding
+              if ((decoration.margin?.bottom ?? 0) > 0.0) {
+                additionalTopPadding += decoration.margin?.bottom ?? 0;
+              }
 
-            // If top margin is given, add it to top padding
-            if ((decoration.margin?.top ?? 0) > 0.0) {
-              additionalTopPadding += decoration.margin?.top ?? 0;
-            }
-          } else
-            topPadding = 0.0;
+              // If top margin is given, add it to top padding
+              if ((decoration.margin?.top ?? 0) > 0.0) {
+                additionalTopPadding += decoration.margin?.top ?? 0;
+              }
+            } else
+              topPadding = 0.0;
 
-          topPadding += additionalTopPadding;
-          leftPadding += additionalLeftPadding;
-          rightPadding += additionalRightPadding;
-        } else {
-          topPadding = bottomPadding = leftPadding = rightPadding = 0.0;
-        }
-      });
+            topPadding += additionalTopPadding;
+            leftPadding += additionalLeftPadding;
+            rightPadding += additionalRightPadding;
+          } else {
+            topPadding = bottomPadding = leftPadding = rightPadding = 0.0;
+          }
+        });
+      }
     });
   }
 
@@ -707,7 +709,8 @@ class _SlidingPanelState extends State<SlidingPanel>
     }
 
     if (oldWidget.dragMultiplier != widget.dragMultiplier) {
-      _metadata.dragMultiplier = widget.dragMultiplier._safeClamp(1.0, 5.0).toDouble();
+      _metadata.dragMultiplier =
+          widget.dragMultiplier._safeClamp(1.0, 5.0).toDouble();
     }
 
     if (oldWidget.isTwoStatePanel != widget.isTwoStatePanel) {
@@ -849,7 +852,8 @@ class _SlidingPanelState extends State<SlidingPanel>
         ),
         shape: (header.decoration.borderRadius != null)
             ? RoundedRectangleBorder(
-                borderRadius: header.decoration.borderRadius ?? BorderRadius.zero)
+                borderRadius:
+                    header.decoration.borderRadius ?? BorderRadius.zero)
             : null,
         titleSpacing: 0,
         backgroundColor:
@@ -912,7 +916,9 @@ class _SlidingPanelState extends State<SlidingPanel>
       top: _calculatedHeaderHeight,
       width: (_metadata.constrainedWidth - leftPadding - rightPadding) -
           (decoration.margin == null ? 0 : decoration.margin?.horizontal ?? 0) -
-          (decoration.padding == null ? 0 : decoration.padding?.horizontal ?? 0),
+          (decoration.padding == null
+              ? 0
+              : decoration.padding?.horizontal ?? 0),
       child: Container(
         child: GestureDetector(
           onVerticalDragUpdate: (details) => _dragPanel(

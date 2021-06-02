@@ -176,7 +176,8 @@ class PanelController {
   /// Given [value] is clamped between
   /// [PanelSize.closedHeight] and [PanelSize.expandedHeight].
   void setPanelPosition(double value) => controlling
-      ? _setPanelPosition(panel!, duration: Duration(milliseconds: 0), to: value)
+      ? _setPanelPosition(panel!,
+          duration: Duration(milliseconds: 0), to: value)
       : _printError();
 
   /// Set panel position WITH animation.

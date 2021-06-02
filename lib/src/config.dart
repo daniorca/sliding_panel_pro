@@ -794,7 +794,8 @@ class SafeAreaConfig {
   /// Also, don't remove padding from the content.
   ///
   /// This is the default.
-  const SafeAreaConfig.all({bool? removePaddingFromContent, bool? bodyHasSlivers})
+  const SafeAreaConfig.all(
+      {bool? removePaddingFromContent, bool? bodyHasSlivers})
       : this.top = true,
         this.bottom = true,
         this.sides = true,
