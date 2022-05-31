@@ -27,7 +27,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   sliding_panel_pro:
-    path: /Users/danielortiz/Development/packages/sliding_panel_pro/
+    path: ../
 
 dev_dependencies:
   flutter_test:
